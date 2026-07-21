@@ -32,4 +32,7 @@ public class Product {
     @Lob
     private byte[] imageData;
 
+    public Product(int id) {
+        this.id = id;
+    }
 }
