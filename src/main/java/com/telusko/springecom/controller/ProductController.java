@@ -78,4 +78,12 @@ public class ProductController {
         }
     }
 
+    // spring.datasource.hikari.auto-commit=false, el profesor puso esta propiedad porque no le funcionaba el search.
+    @GetMapping("/products/search")
+    public ResponseEntity<List<Product>> searchProducts(@RequestParam String keyword) {
+        List<Product> products = productService.searchProducts(keyword);
+        System.out.println("searching with :" + keyword);
+        return new ResponseEntity<>(products, HttpStatus.OK);
+    }
+
 }
