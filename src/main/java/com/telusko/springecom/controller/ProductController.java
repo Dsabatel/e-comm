@@ -5,6 +5,7 @@ import com.telusko.springecom.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -80,6 +81,11 @@ public class ProductController {
 
     // spring.datasource.hikari.auto-commit=false, el profesor puso esta propiedad porque no le funcionaba el search.
     @GetMapping("/products/search")
+    @Transactional(readOnly = true)
+    /*Eso confirma exactamente el diagnóstico inicial.
+    Al quitar @Transactional, la sesión con la base de datos se cierra antes de tiempo y PostgreSQL bloquea la lectura del stream binario pesado.
+    El error Large Objects may not be used in auto-commit mode es el comportamiento estándar de PostgreSQL cuando intentas leer un campo anotado con @Lob sin una transacción activa que respalde el proceso.
+    * */
     public ResponseEntity<List<Product>> searchProducts(@RequestParam String keyword) {
         List<Product> products = productService.searchProducts(keyword);
         System.out.println("searching with :" + keyword);
